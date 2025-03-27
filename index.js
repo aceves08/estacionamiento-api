@@ -49,13 +49,17 @@ app.get('/estado-alarma', async (req, res) => {
 });
 
 // 🔄 Ruta para actualizar el estado de la alarma a false (app móvil o ESP32)
-app.put('/estado-alarma/:id', async (req, res) => {
+app.put('/estado-alarma', async (req, res) => {
   try {
-    const { id } = req.params;
-    const lectura = await Lectura.findByIdAndUpdate(id, { alarma: false }, { new: true });
+    // Buscar el último documento con alarma: true
+    const lectura = await Lectura.findOneAndUpdate(
+      { alarma: true },                // 🔍 Condición para buscar
+      { alarma: false },               // 🔄 Actualizar solo alarma a false
+      { new: true, sort: { timestamp: -1 } }  // 🕒 Tomar el más reciente
+    );
 
     if (!lectura) {
-      return res.status(404).json({ error: 'Lectura no encontrada' });
+      return res.status(404).json({ error: '❌ No hay alarma activa para desactivar.' });
     }
 
     res.json({ mensaje: '✅ Alarma desactivada', lectura });
