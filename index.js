@@ -38,15 +38,15 @@ app.post('/registrar', async (req, res) => {
 app.get('/estado-alarma', async (req, res) => {
   try {
     const lectura = await Lectura.findOne({ alarma: true }).sort({ timestamp: -1 });
-    if (!lectura) {
-      return res.status(404).json({ alarma: false, mensaje: 'No hay alarma activa' });
-    }
 
-    res.json({ alarma: lectura.alarma, _id: lectura._id, rfid: lectura.rfid });
+    // Si no hay alarma activa, devuelve false
+    const estadoAlarma = !!lectura;
+    res.json({ alarma: estadoAlarma });
   } catch (err) {
     res.status(500).json({ error: '❌ Error al consultar alarma', detalle: err.message });
   }
 });
+
 
 // 🔄 Ruta para actualizar el estado de la alarma a false (app móvil o ESP32)
 app.put('/estado-alarma', async (req, res) => {
