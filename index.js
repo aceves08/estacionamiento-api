@@ -14,7 +14,6 @@ mongoose.connect(process.env.MONGO_URI)
 // Esquema
 const lecturaSchema = new mongoose.Schema({
   rfid: String,
-  magnetico: Boolean,
   infrarrojo: Boolean,
   alarma: Boolean,
   autorizado: Boolean,
